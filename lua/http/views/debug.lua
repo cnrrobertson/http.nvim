@@ -12,7 +12,14 @@ M.show = function(bufnr)
         return
     end
 
-    util.set_lines(bufnr, 0, -1, false, state.debug_log)
+    -- Split any multi-line log entries (nvim_buf_set_lines rejects embedded newlines)
+    local lines = {}
+    for _, entry in ipairs(state.debug_log) do
+        for _, l in ipairs(vim.split(entry, "\n", { plain = true })) do
+            table.insert(lines, l)
+        end
+    end
+    util.set_lines(bufnr, 0, -1, false, lines)
 end
 
 return M

@@ -37,10 +37,14 @@ M.parse_lines = function(lines)
         local line = raw_line:gsub("\r$", "")  -- strip CR
 
         if st == STATE_PREAMBLE then
-            -- Collect # @script directives
+            -- Collect # @script directives (http.nvim style)
             local script_path = line:match("^#%s*@script%s+(.+)$")
+            -- Also support kulala-style: < ./script.lua
+            local kulala_path = line:match("^<%s*(.+%.lua)%s*$")
             if script_path then
                 table.insert(scripts, vim.trim(script_path))
+            elseif kulala_path then
+                table.insert(scripts, vim.trim(kulala_path))
             elseif line:match("^%s*#") or line:match("^%s*$") then
                 -- other comments or blank lines — skip
             else
@@ -61,10 +65,13 @@ M.parse_lines = function(lines)
             if line:match("^%s*$") then
                 st = STATE_BODY
             else
-                -- Collect # @script directives even in header section (before blank line)
+                -- Collect script directives even in header section
                 local script_path = line:match("^#%s*@script%s+(.+)$")
+                local kulala_path = line:match("^<%s*(.+%.lua)%s*$")
                 if script_path then
                     table.insert(scripts, vim.trim(script_path))
+                elseif kulala_path then
+                    table.insert(scripts, vim.trim(kulala_path))
                 else
                     local k, v = line:match("^([^:]+):%s*(.*)$")
                     if k and v then
