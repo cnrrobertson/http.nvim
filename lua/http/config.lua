@@ -2,14 +2,15 @@
 local M = {
     winbar = {
         show              = true,
-        sections          = { "response", "headers", "history", "debug" },
+        sections          = { "response", "formatted", "headers", "history", "debug" },
         default_section   = "response",
         show_keymap_hints = true,
         base_sections     = {
-            response = { label = "Response", keymap = "R" },
-            headers  = { label = "Headers",  keymap = "H" },
-            history  = { label = "History",  keymap = "Y" },
-            debug    = { label = "Debug",    keymap = "D" },
+            response  = { label = "Response",  keymap = "R" },
+            formatted = { label = "Formatted", keymap = "F" },
+            headers   = { label = "Headers",   keymap = "H" },
+            history   = { label = "History",   keymap = "Y" },
+            debug     = { label = "Debug",     keymap = "D" },
         },
     },
     windows = {

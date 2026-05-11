@@ -15,7 +15,7 @@ local function pretty_json(body)
     if not ok or decoded == nil then return body, false end
     -- vim.fn.json_encode produces compact JSON; use vim.json if available (Neovim 0.10+)
     local ok2, pretty = pcall(function()
-        return vim.json and vim.json.encode and vim.json.encode(decoded, { indent = 2 })
+        return vim.json and vim.json.encode and vim.json.encode(decoded, { indent = "  " })
     end)
     if ok2 and pretty then return pretty, true end
     -- Fallback: re-encode with compact then manual indent via jq if available
