@@ -26,6 +26,10 @@ local M = {
         max_body_bytes = 262144,  -- 256 KB
     },
     curl_path = "curl",
+    curl = {
+        connect_timeout = 10,   -- seconds (--connect-timeout)
+        max_time        = 30,   -- seconds (--max-time); 0 = no limit
+    },
 }
 
 return M

@@ -95,7 +95,8 @@ end
 ---@param request table  {method, url, headers, body}
 ---@return string[]
 local function build_argv(request)
-    local curl = setup.config.curl_path or "curl"
+    local curl    = setup.config.curl_path or "curl"
+    local curl_cfg = setup.config.curl or {}
     local args = {
         curl,
         "--silent",
@@ -105,6 +106,18 @@ local function build_argv(request)
         "-X", request.method or "GET",
         request.url,
     }
+
+    -- Timeouts
+    local connect_timeout = curl_cfg.connect_timeout
+    if connect_timeout and connect_timeout > 0 then
+        table.insert(args, "--connect-timeout")
+        table.insert(args, tostring(connect_timeout))
+    end
+    local max_time = curl_cfg.max_time
+    if max_time and max_time > 0 then
+        table.insert(args, "--max-time")
+        table.insert(args, tostring(max_time))
+    end
 
     -- Headers
     for k, v in pairs(request.headers or {}) do
