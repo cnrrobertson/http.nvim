@@ -152,11 +152,22 @@ M.show = function(bufnr)
             vim.list_extend(detail_lines, vim.split(entry.request_body, "\n", { plain = true }))
         end
 
+        local has_response = false
+        if entry.response_id then
+            local resp_body = persist.load_response(entry.response_id)
+            if resp_body and resp_body ~= "" then
+                has_response = true
+                table.insert(detail_lines, "")
+                table.insert(detail_lines, "── Response (" .. (entry.http_status or "?") .. ") ──────────────────────────")
+                vim.list_extend(detail_lines, vim.split(resp_body, "\n", { plain = true }))
+            end
+        end
+
         local max_w = math.max(40, math.floor(vim.o.columns * 0.75))
         local content_w = 0
         for _, l in ipairs(detail_lines) do content_w = math.max(content_w, #l) end
         local width  = math.min(max_w, content_w + 4)
-        local height = math.min(math.floor(vim.o.lines * 0.6), #detail_lines + 2)
+        local height = math.min(math.floor(vim.o.lines * 0.8), #detail_lines + 2)
         height = math.max(height, 3)
 
         local float_buf = api.nvim_create_buf(false, true)
@@ -164,7 +175,8 @@ M.show = function(bufnr)
         vim.bo[float_buf].modifiable = false
         vim.bo[float_buf].filetype   = "http"
 
-        local title = entry.name and (" " .. entry.name .. " ") or " Request "
+        local title = entry.name and (" " .. entry.name .. " ")
+            or (has_response and " Request / Response " or " Request ")
         local win   = api.nvim_open_win(float_buf, true, {
             relative  = "editor",
             width     = width,
